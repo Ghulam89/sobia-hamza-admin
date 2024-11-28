@@ -1,0 +1,1 @@
+export const Base_url = 'https://ecommerce-backend1-7fef52b9cdfc.herokuapp.com'
