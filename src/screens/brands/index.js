@@ -23,7 +23,7 @@ const Brands = () => {
       .then((res) => {
         console.log(res);
 
-        setUsers(res.data.data.data);
+        setUsers(res.data.data);
       })
       .catch((error) => {
         console.log(error);

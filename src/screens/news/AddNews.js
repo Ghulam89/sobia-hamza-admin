@@ -74,6 +74,7 @@ const AddNews = ({ isModalOpen, setIsModalOpen, closeModal, setUsers }) => {
     const params = new FormData();
     params.append('title', title);
     params.append('content', subContent);
+    params.append('shortDescription', content);
     params.append('image', imageFile);
 
     try {
@@ -88,7 +89,7 @@ const AddNews = ({ isModalOpen, setIsModalOpen, closeModal, setUsers }) => {
         toast.success(res.data?.message);
 
         // Fetch updated blogs
-        const blogsRes = await axios.get(`${Base_url}/blog/getAll`);
+        const blogsRes = await axios.get(`${Base_url}/blog/getAll?page=1`);
         setUsers(blogsRes?.data?.data);
         setIsModalOpen(false);
       }

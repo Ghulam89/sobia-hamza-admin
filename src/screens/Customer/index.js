@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import Button from "../../components/Button";
 import { Link } from "react-router-dom";
 const Customers = () => {
+
   const [products, setProducts] = useState([]);
   useEffect(() => {
     axios
@@ -41,7 +42,16 @@ const Customers = () => {
             console.log(res);
             if (res.status === 200) {
               Swal.fire("Deleted!", "Your file has been deleted.", "success");
-
+              axios
+              .get(`${Base_url}/products/getAll?page=1`)
+              .then((res) => {
+                console.log(res);
+        
+                setProducts(res?.data?.data?.data);
+              })
+              .catch((error) => {
+                console.log(error);
+              });
             
             }
           })
@@ -51,11 +61,8 @@ const Customers = () => {
       }
     });
   };
-
+  
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-
-
   const UpdateStatus = (id, newStatus) => {
     const params = {
       status: newStatus,
@@ -104,10 +111,10 @@ const Customers = () => {
       
       <section className="mb-20 mt-7 text-gray-800">
       <div className="block rounded-lg shadow-lg">
-        <div className="flex flex-col">
-          <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div className="flex overflow-x-auto flex-col">
+          <div className=" sm:-mx-6 lg:-mx-8">
             <div className="inline-block min-w-full sm:px-6 lg:px-8">
-              <div className="overflow-hidden">
+              <div className="">
                 <table className="min-w-full mb-0">
                   <thead className=" bg-primary">
                     <tr className=" rounded-lg whitespace-nowrap ">
@@ -122,6 +129,13 @@ const Customers = () => {
                         className=" text-sm text-white  font-bold px-6 py-4"
                       >
                         Name
+                      </th>
+
+                      <th
+                        scope="col"
+                        className=" text-sm text-white  font-bold px-6 py-4"
+                      >
+                        Image
                       </th>
 
 
@@ -144,12 +158,12 @@ const Customers = () => {
                       >
                         Sub Categories
                       </th>
-                      <th
+                      {/* <th
                         scope="col"
                         className="text-sm  text-white   font-bold px-6 py-4"
                       >
                         Designation
-                      </th>
+                      </th> */}
 
 
                       <th
@@ -158,13 +172,13 @@ const Customers = () => {
                       >
                         Status
                       </th>
-
+{/* 
                       <th
                         scope="col"
                         className="text-sm  text-white   font-bold px-6 py-4"
                       >
                         Update Status
-                      </th>
+                      </th> */}
 
                       <th
                         scope="col"
@@ -191,6 +205,11 @@ const Customers = () => {
                               {item?.title}
                             </span>
                           </td>
+                          <td className="align-middle text-sm font-normal px-6 py-4 whitespace-nowrap  text-center">
+                            <div className=" w-20  h-20">
+                            <img src={item?.images[0]} className=" w-full object-cover rounded-md h-full" alt="" />
+                            </div>
+                          </td>
                           <td className="text-sm font-normal text-center px-6 py-4 whitespace-nowrap">
                             <span className=" text-base text-black  py-1 px-2.5 leading-none text-center whitespace-nowrap align-baseline   bg-green-200  rounded-full">
                               {item?.brandId?.name}
@@ -207,11 +226,11 @@ const Customers = () => {
                             </span>
                           </td>
 
-                          <td className="align-middle text-center text-sm font-normal px-6 py-4 whitespace-nowrap text-left">
-                            <span className=" text-base text-black  py-1 px-2.5 leading-none  whitespace-nowrap    bg-green-200  rounded-full">
-                            {item?.description}
+                          {/* <td className="align-middle text-center text-sm font-normal px-6 py-4  text-left">
+                            <span className=" text-base text-black  py-1 px-2.5 leading-none   bg-green-200  rounded-full">
+                            {item?.designation}
                             </span>
-                          </td>
+                          </td> */}
 
                           <td className="align-middle text-center text-sm font-normal px-6 py-4 whitespace-nowrap text-left">
                             <span className=" text-sm text-white  py-1 px-3.5 leading-none  whitespace-nowrap     bg-green  rounded-full">
@@ -219,7 +238,7 @@ const Customers = () => {
                             </span>
                           </td>
 
-                          <td className="align-middle text-center text-sm font-normal px-6 py-4 whitespace-nowrap text-left">
+                          {/* <td className="align-middle text-center text-sm font-normal px-6 py-4 whitespace-nowrap text-left">
                             <select
                               value={item.status || "pending"}
                               onChange={(e) => {
@@ -232,7 +251,7 @@ const Customers = () => {
                               <option value={"approved"}>Approved</option>
                               <option value={"rejected"}>Rejected</option>
                             </select>
-                          </td>
+                          </td> */}
 
                           <td className="align-middle  text-sm font-normal px-6 py-4 whitespace-nowrap">
                             <div className=" flex justify-center gap-2">

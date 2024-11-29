@@ -69,43 +69,12 @@ const UpdateNews = ({ isModalOpen, setIsModalOpen, closeModal, setUsers, getData
     e.preventDefault();
 
     setLoading(true);
-    let imageUrl = additionalImage;
 
-    if (imageFile) {
-      const formData = new FormData();
-      formData.append("images", imageFile);
-
-      try {
-        const uploadResponse = await axios.post(`http://35.88.137.61/api/api/upload`, formData);
-
-        console.log(uploadResponse);
-
-        if (uploadResponse?.data?.data?.[0]) {
-          imageUrl = uploadResponse.data.data[0];
-        } else {
-          toast.error("No data received from the image upload.");
-          setLoading(false);
-          return;
-        }
-      } catch (error) {
-        console.error("Image upload failed:", error);
-        toast.error("Image upload failed.");
-        setLoading(false);
-        return;
-      }
-    }
-
-
-    console.log(imageUrl);
-
-
-
-    const params = {
-      title: title,
-      content: content,
-      ...(subContent && { subtitle: subContent }),
-      ...(imageUrl && { images: imageUrl }),
-    };
+    const params = new FormData();
+    params.append('title', title);
+    params.append('content', subContent);
+    params.append('shortDescription', content);
+    params.append('image', imageFile);
 
     try {
       const res = await axios.put(`${Base_url}/blog/update/${getData?._id}`, params);
@@ -113,7 +82,7 @@ const UpdateNews = ({ isModalOpen, setIsModalOpen, closeModal, setUsers, getData
 
       if (res.data.status === 'success') {
         toast.success(res.data?.message);
-        const blogsRes = await axios.get(`${Base_url}/blog/getAll`);
+        const blogsRes = await axios.get(`${Base_url}/blog/getAll?page=1`);
         setUsers(blogsRes?.data?.blogs);
         setIsModalOpen(false);
       }

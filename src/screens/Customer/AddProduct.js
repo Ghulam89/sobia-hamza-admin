@@ -18,12 +18,11 @@ const AddProduct = () => {
     const [subcategories, setSubCategories] = useState([]);
     const [brands, setBrands] = useState([]);
     const [previewImages, setPreviewImages] = useState([]);
-    console.log(previewImages);
     const [selectedFiles, setSelectedFiles] = useState([]);
 
     console.log(selectedFiles);
-
-
+  
+    
 
     // Fetch categories and subcategories
     useEffect(() => {
@@ -63,15 +62,18 @@ const AddProduct = () => {
     const onSubmit = async (values, { resetForm }) => {
         setLoader(true);
         const formData = new FormData();
+        
+        // Append each file individually to the 'images' field
+    selectedFiles.forEach((file) => {
+        formData.append("images", file);
+    });
 
-        selectedFiles?.forEach((file) => {
-            formData.append("images", file);
-        });
-
-        // Append other form data
-        Object.keys(values).forEach((key) => {
+    // Append other form data
+    Object.keys(values).forEach((key) => {
+        if (key !== "images") { // Skip 'images' because they're already appended
             formData.append(key, values[key]);
-        });
+        }
+    });
 
         try {
             const response = await axios.post(`${Base_url}/products/create`, formData);
@@ -137,8 +139,8 @@ const AddProduct = () => {
                                 </div>
 
 
-                                {/* Category Select */}
-                                <div className="w-[49%]">
+                                 {/* Category Select */}
+                                 <div className="w-[49%]">
                                     <label className="block mb-2 text-sm font-medium text-gray-900">Brand</label>
                                     <Field
                                         as="select"
@@ -252,8 +254,8 @@ const AddProduct = () => {
                                 </div>
 
 
-                                {/* Image Upload */}
-                                <div className="w-[100%]">
+  {/* Image Upload */}
+  <div className="w-[100%]">
                                     <label className="block mb-2 text-sm font-medium text-gray-900">Upload Images</label>
                                     <input
                                         type="file"
@@ -294,7 +296,7 @@ const AddProduct = () => {
                                         Description
                                     </label>
                                     <Field
-                                        as="textarea"
+                                      as="textarea" 
                                         name="description"
                                         type="text"
                                         placeholder="Enter Description"
@@ -307,9 +309,9 @@ const AddProduct = () => {
                                     />
                                 </div>
 
+                               
 
-
-
+                              
                             </div>
 
                             <div className=" flex justify-center items-center">

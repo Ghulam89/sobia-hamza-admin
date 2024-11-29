@@ -44,7 +44,7 @@ const AdminLogin = () => {
   });
 
   return (
-    <div className="bg-LoginBg bg-no-repeat bg-cover h-screen flex justify-center items-center">
+    <div className=" bg-no-repeat bg-cover h-screen flex justify-center items-center">
       <div className="bg-white bg-opacity-85 w-full h-full flex justify-center items-center">
         <form
           onSubmit={formik.handleSubmit}
@@ -53,7 +53,7 @@ const AdminLogin = () => {
           <div className="text-center">
             
             <h3 className="mb-3 text-primary capitalize pt-3 font-semibold text-2xl">
-              Welcome to 
+              Welcome to  Sobia Hamza Admin
             </h3>
            
           </div>

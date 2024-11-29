@@ -1,1 +1,1 @@
-export const Base_url = 'https://ecommerce-backend1-7fef52b9cdfc.herokuapp.com'
+export const Base_url = 'http://192.168.18.7:5000'
