@@ -1,1 +1,1 @@
-export const Base_url = 'http://192.168.18.7:5000'
+export const Base_url = 'https://sobia-hamza-529939f3af1a.herokuapp.com'

@@ -48,6 +48,8 @@ const AddAdminUser = ({
     setLoader(true);
     try {
       const response = await axios.post(`${Base_url}/category/create`, formData);
+      console.log(response);
+      
       if (response.status === 200) {
         const res = await axios.get(`${Base_url}/category/getAll`);
         setUsers(res.data.data);

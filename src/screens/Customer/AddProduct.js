@@ -140,7 +140,7 @@ const AddProduct = () => {
 
 
                                  {/* Category Select */}
-                                 <div className="w-[49%]">
+                                 <div className="w-[48%]">
                                     <label className="block mb-2 text-sm font-medium text-gray-900">Brand</label>
                                     <Field
                                         as="select"
@@ -158,7 +158,7 @@ const AddProduct = () => {
                                 </div>
 
                                 {/* Category Select */}
-                                <div className="w-[49%]">
+                                <div className="w-[48%]">
                                     <label className="block mb-2 text-sm font-medium text-gray-900">Categories</label>
                                     <Field
                                         as="select"
@@ -178,7 +178,7 @@ const AddProduct = () => {
 
 
                                 {/* Category Select */}
-                                <div className="w-[49%]">
+                                <div className="w-[48%]">
                                     <label className="block mb-2 text-sm font-medium text-gray-900">Sub Categories</label>
                                     <Field
                                         as="select"
@@ -198,7 +198,7 @@ const AddProduct = () => {
 
 
                                 {/* Title Input */}
-                                <div className="w-[49%]">
+                                <div className="w-[48%]">
                                     <label className="block mb-2 text-sm font-medium text-gray-900">
                                         Actual Price
                                     </label>
@@ -217,7 +217,7 @@ const AddProduct = () => {
 
 
                                 {/* Title Input */}
-                                <div className="w-[49%]">
+                                <div className="w-[48%]">
                                     <label className="block mb-2 text-sm font-medium text-gray-900">
                                         Discount Price
                                     </label>
