@@ -33,10 +33,10 @@ const AdminLogin = () => {
           localStorage.setItem("ceat_admin_user", JSON.stringify(data));
           navigate("/dashboard");
         } else {
-          setError(response.data.message || "Login failed");
+          setError(response.data.message);
         }
       } catch (err) {
-        setError(err.response?.data?.message || "An error occurred");
+        setError(err.response?.data?.message );
       } finally {
         setLoading(false);
       }
