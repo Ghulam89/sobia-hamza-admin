@@ -89,7 +89,7 @@ const AddNews = ({ isModalOpen, setIsModalOpen, closeModal, setUsers }) => {
         toast.success(res.data?.message);
 
         // Fetch updated blogs
-        const blogsRes = await axios.get(`${Base_url}/blog/getAll?page=1`);
+        const blogsRes = await axios.get(`${Base_url}/blog/getAll`);
         setUsers(blogsRes?.data?.data);
         setIsModalOpen(false);
       }

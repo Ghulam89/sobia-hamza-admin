@@ -13,7 +13,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     axios
-      .get(`${Base_url}/customer/getAll`)
+      .get(`${Base_url}/brands/getAll`)
       .then((res) => {
         console.log(res);
         setRooms(res.data.data);
@@ -23,7 +23,7 @@ const Dashboard = () => {
       });
 
     axios
-      .get(`${Base_url}/key/getAll`)
+      .get(`${Base_url}/category/getAll`)
       .then((res) => {
         console.log(res);
         setCategory(res.data.data);
@@ -33,10 +33,10 @@ const Dashboard = () => {
       });
 
     axios
-      .get(`${Base_url}/key/getAll`)
+      .get(`${Base_url}/products/getAll`)
       .then((res) => {
         console.log(res);
-        setSubCategory(res.data.data);
+        setSubCategory(res?.data?.data?.data);
       })
       .catch((error) => {
         console.log(error);
@@ -55,7 +55,7 @@ const Dashboard = () => {
               <div>
                 <h2 className=" text-black font-bold">Brands</h2>
                 <div className=" pt-2 flex items-center gap-3">
-                  <p className="text-4xl text-black">{category?.length}</p>
+                  <p className="text-4xl text-black">{rooms?.length}</p>
                 </div>
               </div>
               <div>
@@ -68,7 +68,7 @@ const Dashboard = () => {
               <div>
                 <h2 className=" text-black font-bold">Categories</h2>
                 <div className=" pt-2 flex items-center gap-3">
-                  <p className="text-4xl text-black">{subCategory?.length}</p>
+                  <p className="text-4xl text-black">{category?.length}</p>
                 </div>
               </div>
               <div>
