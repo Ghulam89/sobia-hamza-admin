@@ -10,8 +10,6 @@ import Wrapper from "../Wrapper";
 import { useNavigate } from "react-router-dom";
 
 const AddProduct = () => {
-
-
     const navigate = useNavigate();
     const [loading, setLoader] = useState(false);
     const [categories, setCategories] = useState([]);
@@ -19,10 +17,11 @@ const AddProduct = () => {
     const [brands, setBrands] = useState([]);
     const [previewImages, setPreviewImages] = useState([]);
     const [selectedFiles, setSelectedFiles] = useState([]);
-
-    console.log(selectedFiles);
-  
-    
+    const [availableSizes, setAvailableSizes] = useState([
+        "S", "M", "L", "XL", "XXL", "XXXL", 
+        "28", "30", "32", "34", "36", "38", "40",
+        "6", "7", "8", "9", "10", "11", "12"
+    ]);
 
     // Fetch categories and subcategories
     useEffect(() => {
@@ -55,37 +54,39 @@ const AddProduct = () => {
         categoryId: Yup.string().required("Category selection is required"),
         subCategoryId: Yup.string().required("Sub Category selection is required"),
         brandId: Yup.string().required("Brand selection is required"),
+        sizes: Yup.array().min(1, "At least one size is required"),
         images: Yup.array().min(1, "At least one image is required"),
     });
 
-    // Form Submit Handler
     const onSubmit = async (values, { resetForm }) => {
         setLoader(true);
         const formData = new FormData();
-        
-        // Append each file individually to the 'images' field
-    selectedFiles.forEach((file) => {
-        formData.append("images", file);
-    });
+        selectedFiles.forEach((file) => {
+            formData.append("images", file);
+        });
 
-    // Append other form data
-    Object.keys(values).forEach((key) => {
-        if (key !== "images") { // Skip 'images' because they're already appended
-            formData.append(key, values[key]);
+       
+        if (values.sizes && values.sizes.length > 0) {
+            values.sizes.forEach((size) => {
+                formData.append("size", size);
+            });
+           
         }
-    });
+
+        Object.keys(values).forEach((key) => {
+            if (key !== "images" && key !== "size") {
+                formData.append(key, values[key]);
+            }
+        });
 
         try {
             const response = await axios.post(`${Base_url}/products/create`, formData);
             if (response.status === 200) {
-
                 toast.success(response.data.message);
                 resetForm();
                 setPreviewImages([]);
                 setSelectedFiles([]);
-
-                navigate('/customers')
-
+                navigate('/customers');
             } else {
                 toast.error(response.data.message);
             }
@@ -111,15 +112,15 @@ const AddProduct = () => {
                         discountPrice: "",
                         gst: "",
                         description: "",
+                        sizes: [],
                         images: [],
                     }}
                     validationSchema={validationSchema}
                     onSubmit={onSubmit}
                 >
-                    {({ handleSubmit, setFieldValue }) => (
+                    {({ handleSubmit, setFieldValue, values }) => (
                         <Form onSubmit={handleSubmit}>
                             <div className="flex gap-5 justify-between flex-wrap">
-
                                 {/* Title Input */}
                                 <div className="w-[100%]">
                                     <label className="block mb-2 text-sm font-medium text-gray-900">
@@ -138,9 +139,8 @@ const AddProduct = () => {
                                     />
                                 </div>
 
-
-                                 {/* Category Select */}
-                                 <div className="w-[48%]">
+                                {/* Brand Select */}
+                                <div className="w-[48%]">
                                     <label className="block mb-2 text-sm font-medium text-gray-900">Brand</label>
                                     <Field
                                         as="select"
@@ -175,9 +175,7 @@ const AddProduct = () => {
                                     <ErrorMessage name="categoryId" component="div" className="text-red text-sm mt-1" />
                                 </div>
 
-
-
-                                {/* Category Select */}
+                                {/* Sub Category Select */}
                                 <div className="w-[48%]">
                                     <label className="block mb-2 text-sm font-medium text-gray-900">Sub Categories</label>
                                     <Field
@@ -195,9 +193,32 @@ const AddProduct = () => {
                                     <ErrorMessage name="subCategoryId" component="div" className="text-red text-sm mt-1" />
                                 </div>
 
+                                {/* Sizes Multi-select */}
+                                <div className="w-[48%]">
+                                    <label className="block mb-2 text-sm font-medium text-gray-900">Available Sizes</label>
+                                    <div className="flex flex-wrap gap-2">
+                                        {availableSizes.map((size) => (
+                                            <div key={size} className="flex items-center">
+                                                <input
+                                                    type="checkbox"
+                                                    id={`size-${size}`}
+                                                    checked={values.sizes.includes(size)}
+                                                    onChange={(e) => {
+                                                        const newSizes = e.target.checked
+                                                            ? [...values.sizes, size]
+                                                            : values.sizes.filter(s => s !== size);
+                                                        setFieldValue("sizes", newSizes);
+                                                    }}
+                                                    className="mr-1"
+                                                />
+                                                <label htmlFor={`size-${size}`}>{size}</label>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <ErrorMessage name="sizes" component="div" className="text-red text-sm mt-1" />
+                                </div>
 
-
-                                {/* Title Input */}
+                                {/* Actual Price Input */}
                                 <div className="w-[48%]">
                                     <label className="block mb-2 text-sm font-medium text-gray-900">
                                         Actual Price
@@ -215,8 +236,7 @@ const AddProduct = () => {
                                     />
                                 </div>
 
-
-                                {/* Title Input */}
+                                {/* Discount Price Input */}
                                 <div className="w-[48%]">
                                     <label className="block mb-2 text-sm font-medium text-gray-900">
                                         Discount Price
@@ -234,16 +254,15 @@ const AddProduct = () => {
                                     />
                                 </div>
 
-
-                                {/* Title Input */}
+                                {/* GST Input */}
                                 <div className="w-[49%]">
                                     <label className="block mb-2 text-sm font-medium text-gray-900">
-                                        Gst
+                                        GST
                                     </label>
                                     <Field
                                         name="gst"
                                         type="text"
-                                        placeholder="Enter Gst"
+                                        placeholder="Enter GST"
                                         className="border w-full bg-lightGray py-3 px-2 rounded-md"
                                     />
                                     <ErrorMessage
@@ -253,9 +272,8 @@ const AddProduct = () => {
                                     />
                                 </div>
 
-
-  {/* Image Upload */}
-  <div className="w-[100%]">
+                                {/* Image Upload */}
+                                <div className="w-[100%]">
                                     <label className="block mb-2 text-sm font-medium text-gray-900">Upload Images</label>
                                     <input
                                         type="file"
@@ -290,13 +308,13 @@ const AddProduct = () => {
                                     <ErrorMessage name="images" component="div" className="text-red text-sm mt-1" />
                                 </div>
 
-                                {/* Title Input */}
+                                {/* Description Input */}
                                 <div className="w-[100%]">
                                     <label className="block mb-2 text-sm font-medium text-gray-900">
                                         Description
                                     </label>
                                     <Field
-                                      as="textarea" 
+                                        as="textarea" 
                                         name="description"
                                         type="text"
                                         placeholder="Enter Description"
@@ -308,19 +326,15 @@ const AddProduct = () => {
                                         className="text-red text-sm mt-1"
                                     />
                                 </div>
-
-                               
-
-                              
                             </div>
 
-                            <div className=" flex justify-center items-center">
+                            <div className="flex justify-center items-center">
                                 {/* Submit Button */}
                                 {loading ? (
                                     <button
                                         disabled
                                         type="button"
-                                        className=" h-11 bg-primary w-64 border-none outline-none rounded-lg mt-4 shadow-sm cursor-pointer text-lg text-white font-semibold"
+                                        className="h-11 bg-primary w-64 border-none outline-none rounded-lg mt-4 shadow-sm cursor-pointer text-lg text-white font-semibold"
                                     >
                                         Loading...
                                     </button>
@@ -328,7 +342,7 @@ const AddProduct = () => {
                                     <Button
                                         label="Submit"
                                         type="submit"
-                                        className="bg-primary mt-3 uppercase w-64 text-white py-2 "
+                                        className="bg-primary mt-3 uppercase w-64 text-white py-2"
                                     />
                                 )}
                             </div>

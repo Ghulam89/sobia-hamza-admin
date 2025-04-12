@@ -3,7 +3,6 @@ import Wrapper from "../Wrapper";
 import { Base_url } from "../../utils/Base_url";
 import axios from "axios";
 import { MdSupport } from "react-icons/md";
-import { FaUsers } from "react-icons/fa6";
 import LineChart from "../../chart/LineChart";
 import BarChart from "../../chart/BarChart";
 const Dashboard = () => {
