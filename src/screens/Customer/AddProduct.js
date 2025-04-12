@@ -22,6 +22,7 @@ const AddProduct = () => {
         "28", "30", "32", "34", "36", "38", "40",
         "6", "7", "8", "9", "10", "11", "12"
     ]);
+    const [discountPercentage, setDiscountPercentage] = useState(0);
 
     // Fetch categories and subcategories
     useEffect(() => {
@@ -29,6 +30,15 @@ const AddProduct = () => {
         axios.get(`${Base_url}/subcategory/getAll`).then((res) => setSubCategories(res.data.data)).catch(console.error);
         axios.get(`${Base_url}/brands/getAll`).then((res) => setBrands(res.data.data)).catch(console.error);
     }, []);
+
+    // Calculate discount percentage
+    const calculateDiscount = (actualPrice, discountPrice) => {
+        if (!actualPrice || !discountPrice) return 0;
+        const actual = parseFloat(actualPrice);
+        const discount = parseFloat(discountPrice);
+        if (actual <= 0 || discount >= actual) return 0;
+        return Math.round(((actual - discount) / actual) * 100);
+    };
 
     // Image Preview Handler
     const handleFileChange = (event) => {
@@ -48,36 +58,38 @@ const AddProduct = () => {
     const validationSchema = Yup.object().shape({
         title: Yup.string().required("Title is required"),
         actualPrice: Yup.string().required("Actual price is required"),
-        discountPrice: Yup.string().required("Discount price is required"),
-        gst: Yup.string().required("Gst is required"),
+        // discountPrice: Yup.string().required("Discount price is required"),
+        // gst: Yup.string().required("Gst is required"),
         description: Yup.string().required("Description is required"),
         categoryId: Yup.string().required("Category selection is required"),
         subCategoryId: Yup.string().required("Sub Category selection is required"),
         brandId: Yup.string().required("Brand selection is required"),
-        sizes: Yup.array().min(1, "At least one size is required"),
+        // sizes: Yup.array().min(1, "At least one size is required"),
         images: Yup.array().min(1, "At least one image is required"),
     });
 
     const onSubmit = async (values, { resetForm }) => {
+        console.log(values);
+        
         setLoader(true);
         const formData = new FormData();
         selectedFiles.forEach((file) => {
             formData.append("images", file);
         });
 
-       
         if (values.sizes && values.sizes.length > 0) {
             values.sizes.forEach((size) => {
                 formData.append("size", size);
             });
-           
         }
 
         Object.keys(values).forEach((key) => {
-            if (key !== "images" && key !== "size") {
+            if (key !== "images" && key !== "size" && key !=="gst") {
                 formData.append(key, values[key]);
             }
         });
+
+        formData.append("gst", discountPercentage);
 
         try {
             const response = await axios.post(`${Base_url}/products/create`, formData);
@@ -118,7 +130,7 @@ const AddProduct = () => {
                     validationSchema={validationSchema}
                     onSubmit={onSubmit}
                 >
-                    {({ handleSubmit, setFieldValue, values }) => (
+                    {({ handleSubmit, setFieldValue, values, handleChange }) => (
                         <Form onSubmit={handleSubmit}>
                             <div className="flex gap-5 justify-between flex-wrap">
                                 {/* Title Input */}
@@ -225,9 +237,13 @@ const AddProduct = () => {
                                     </label>
                                     <Field
                                         name="actualPrice"
-                                        type="text"
+                                        type="number"
                                         placeholder="Enter Actual Price"
                                         className="border w-full bg-lightGray py-3 px-2 rounded-md"
+                                        onChange={(e) => {
+                                            handleChange(e);
+                                            setDiscountPercentage(calculateDiscount(e.target.value, values.discountPrice));
+                                        }}
                                     />
                                     <ErrorMessage
                                         name="actualPrice"
@@ -243,9 +259,13 @@ const AddProduct = () => {
                                     </label>
                                     <Field
                                         name="discountPrice"
-                                        type="text"
+                                        type="number"
                                         placeholder="Enter Discount Price"
                                         className="border w-full bg-lightGray py-3 px-2 rounded-md"
+                                        onChange={(e) => {
+                                            handleChange(e);
+                                            setDiscountPercentage(calculateDiscount(values.actualPrice, e.target.value));
+                                        }}
                                     />
                                     <ErrorMessage
                                         name="discountPrice"
@@ -254,16 +274,25 @@ const AddProduct = () => {
                                     />
                                 </div>
 
-                                {/* GST Input */}
+                                {/* GST Input with Discount Percentage */}
                                 <div className="w-[49%]">
-                                    <label className="block mb-2 text-sm font-medium text-gray-900">
-                                        GST
-                                    </label>
+                                    <div className="flex justify-between items-center">
+                                        <label className="block mb-2 text-sm font-medium text-gray-900">
+                                            GST
+                                        </label>
+                                        {discountPercentage > 0 && (
+                                            <span className="text-green-600 font-medium">
+                                                {discountPercentage}% OFF
+                                            </span>
+                                        )}
+                                    </div>
                                     <Field
                                         name="gst"
                                         type="text"
+                                        value={discountPercentage}
                                         placeholder="Enter GST"
-                                        className="border w-full bg-lightGray py-3 px-2 rounded-md"
+                                       className="border w-full bg-lightGray py-3 px-2 rounded-md disabled:opacity-75 disabled:cursor-not-allowed"
+                                        disabled
                                     />
                                     <ErrorMessage
                                         name="gst"
